@@ -1,142 +1,156 @@
-Auth Service – E-Commerce Microservices
+# Auth Service – E-Commerce Microservices
 
-A production-grade Authentication & Authorization microservice built using Spring Boot and JWT, designed as part of a scalable E-Commerce Microservices Architecture.
+A **production-grade Authentication & Authorization microservice** built using **Spring Boot + JWT**, designed as part of a scalable **E-Commerce Microservices Architecture**.
 
-This service is responsible for:
+This service handles:
+- User registration
+- User login
+- Password encryption
+- JWT token generation & validation
+- Securing APIs using Spring Security
 
-User registration
+---
 
-User login
+## 📌 High-Level Architecture
 
-Password encryption
+```
 
-JWT token generation and validation
-
-Securing APIs using Spring Security
-
-High-Level Architecture
 [ Client (Web / Mobile) ]
-            |
-            v
-    [ Auth Service ]
-            |
-            v
-      [ User Database ]
+|
+v
+[ Auth Service ]
+|
+v
+[ User Database ]
+```
+
+- Client authenticates using `/auth/login`
+- JWT token is returned
+- Token must be sent in `Authorization` header for secured endpoints
+- Stateless authentication using JWT
+
+---
+
+## 🛠 Tech Stack
+```
+
+| Layer            | Technology |
+|------------------|------------|
+| Language         | Java 17 |
+| Framework        | Spring Boot 3 |
+| Security         | Spring Security 6 |
+| Authentication  | JWT (io.jsonwebtoken – jjwt) |
+| ORM              | Spring Data JPA (Hibernate) |
+| Database         | MySQL / PostgreSQL |
+| Build Tool       | Maven |
+| API Testing      | Postman / curl |
+| Deployment Ready | Docker + Cloud |
 
 
-Client authenticates using /auth/login
+```
+---
 
-JWT token is returned
+## 📂 Project Structure
 
-Token must be sent in the Authorization header for secured endpoints
-
-Stateless authentication using JWT
-
-Tech Stack
-Layer	Technology
-Language	Java 17
-Framework	Spring Boot 3
-Security	Spring Security 6
-Authentication	JWT (jjwt)
-ORM	Spring Data JPA (Hibernate)
-Database	MySQL / PostgreSQL
-Build Tool	Maven
-API Testing	Postman / curl
-Deployment	Docker + Cloud
-Project Structure
+```json
 auth-service
 ├── controller
-│   └── AuthController.java
+│ └── AuthController.java
 ├── service
-│   └── UserService.java
+│ └── UserService.java
 ├── security
-│   ├── JwtUtil.java
-│   ├── JwtAuthFilter.java
-│   └── SecurityConfig.java
+│ ├── JwtUtil.java
+│ ├── JwtAuthFilter.java
+│ └── SecurityConfig.java
 ├── repository
-│   └── UserRepository.java
+│ └── UserRepository.java
 ├── entity
-│   └── User.java
+│ └── User.java
 ├── dto
-│   ├── AuthRequest.java
-│   └── AuthResponse.java
+│ ├── AuthRequest.java
+│ └── AuthResponse.java
 ├── exception
-│   └── GlobalExceptionHandler.java
+│ └── GlobalExceptionHandler.java
 └── AuthServiceApplication.java
 
-Authentication Flow
+```
+---
 
-User registers via /auth/register
+## 🔐 Authentication Flow
 
-Password is encrypted using BCrypt
-
-User data is stored in the database
-
-JWT token is generated
-
-Client sends token in every secured request
-
-Authorization header format:
+1. User registers via `/auth/register`
+2. Password is encrypted using BCrypt
+3. User data stored in DB
+4. JWT token is generated
+5. Client sends token in every secured request
 
 Authorization: Bearer <JWT_TOKEN>
 
-API Endpoints
-Register User
 
+---
+
+## 🚀 API Endpoints
+
+### ✅ Register User
 POST /auth/register
 
-Request body:
 
+**Request**
+```json
 {
   "username": "john",
   "email": "john@example.com",
   "password": "password123"
 }
-
-
-Response:
+Response
 
 {
   "token": "eyJhbGciOiJIUzM4NCJ9...",
   "message": "User registered successfully"
 }
+```
+---
 
-Login User
-
+### ✅ Login User
 POST /auth/login
-
-Request body:
+**Request**
+```json
 
 {
   "username": "john",
   "password": "password123"
 }
-
-
-Response:
+Response
 
 {
   "token": "eyJhbGciOiJIUzM4NCJ9...",
   "message": "Login successful"
 }
+```
+---
 
-Secured Endpoint
+### 🔒 Secured Endpoint
+
+**Request**
+```json
 
 GET /auth/me
-
-Header:
+Header
 
 Authorization: Bearer <JWT_TOKEN>
-
-
-Response:
+Response
 
 You are authenticated!
+```
+---
 
-Negative Test Scenarios
+### ❌ Negative Test Scenarios
+
+**Request**
+```json
+
 Username Already Exists
-
-HTTP Status: 400 BAD REQUEST
+Status: 400 BAD REQUEST
 
 {
   "timestamp": "2026-01-30T01:01:20",
@@ -144,96 +158,101 @@ HTTP Status: 400 BAD REQUEST
   "status": 400
 }
 
-Invalid Password
 
-HTTP Status: 401 UNAUTHORIZED
+
+Invalid Password
+Status: 401 UNAUTHORIZED
 
 {
   "timestamp": "2026-01-30T01:05:12",
   "message": "Invalid password",
   "status": 401
 }
-
 Missing JWT Token
-
-HTTP Status: 403 FORBIDDEN
+Status: 403 FORBIDDEN
 
 {
   "status": 403,
   "error": "Forbidden"
 }
 
-Security Configuration Highlights
+```
+---
 
-CSRF disabled (JWT based)
 
-Stateless session management
+### ⚙️ Security Configuration Highlights
 
-Custom JWT authentication filter
+- CSRF disabled (JWT based)
 
-Public endpoints:
+- Stateless session
 
-/auth/register
+- Custom JWT filter
 
-/auth/login
+- Only /auth/login and /auth/register are public
 
-All other endpoints require authentication
+- All other endpoints require authentication
 
-Core rule:
+---
 
-anyRequest().authenticated()
 
-Deployment (Free Tier Friendly)
-
+### 🌍 Deployment (Free Tier Friendly)
 This service can be deployed on:
 
-Railway
+- Railway
 
-Render
+- Render
 
-Fly.io
+- Fly.io
 
-AWS EC2 Free Tier
+- AWS EC2 (Free Tier)
 
-Docker (Optional)
+- Docker 
+
+**(STEPS [Optional] )**
+```
 docker build -t auth-service .
 docker run -p 8082:8082 auth-service
 
-Production Readiness Checklist
+```
+---
 
-JWT-based stateless authentication
 
-Encrypted passwords (BCrypt)
+###  📈 Production-Readiness Checklist
 
-Global exception handling
+```
+ - ✅ JWT-based stateless authentication
+ - ✅ Encrypted passwords
+ - ✅ Global exception handling
+ - ✅ Clean layered architecture
+ - ✅ Secure endpoints
+ - ✅ Cloud-deployable
+ - ✅ GitHub-ready documentation
+```
+---
 
-Clean layered architecture
+### 🔮 Next Roadmap
 
-Secure endpoints
+ - API Gateway
 
-Cloud deployable
+ - Product Service
 
-GitHub-ready documentation
+ - Order Service
 
-Future Roadmap
+ - Inventory Service
 
-API Gateway
+ - Payment Service
 
-Product Service
+ - Centralized Config Server
 
-Order Service
+ - Distributed Tracing
 
-Inventory Service
+ - CI/CD Pipeline
 
-Payment Service
+---
 
-Centralized Config Server
-
-Distributed Tracing
-
-CI/CD Pipeline
-
-Author
+### 👤 Author
 
 Built as part of a Production-Grade E-Commerce Microservices Project
-using Spring Boot and Cloud-Native best practices.
+using Spring Boot & Cloud-Native principles.
+
+---
