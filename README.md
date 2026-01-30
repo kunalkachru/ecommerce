@@ -1,232 +1,206 @@
-Auth Service – Ecommerce Microservices Platform
-📌 Overview
+# Auth Service – E-Commerce Microservices
 
-This repository contains the Authentication & Authorization Service for a production-grade Ecommerce Microservices Architecture.
+A **production-grade Authentication & Authorization microservice** built using **Spring Boot + JWT**, designed as part of a scalable **E-Commerce Microservices Architecture**.
 
-The Auth Service is responsible for:
+This service handles:
+- User registration
+- User login
+- Password encryption
+- JWT token generation & validation
+- Securing APIs using Spring Security
 
-User registration
+---
 
-User login
+## 📌 High-Level Architecture
 
-JWT-based authentication
+[ Client (Web / Mobile) ]
+|
+v
+[ Auth Service ]
+|
+v
+[ User Database ]
 
-Securing downstream services via stateless authentication
 
-It is designed to be cloud-deployable, scalable, and production-ready, following modern Spring Boot and security best practices.
+- Client authenticates using `/auth/login`
+- JWT token is returned
+- Token must be sent in `Authorization` header for secured endpoints
+- Stateless authentication using JWT
 
-🧱 Architecture Context
+---
 
-This service is part of a larger Ecommerce Microservices System, where:
+## 🛠 Tech Stack
 
-Each service is independently deployable
+| Layer            | Technology |
+|------------------|------------|
+| Language         | Java 17 |
+| Framework        | Spring Boot 3 |
+| Security         | Spring Security 6 |
+| Authentication  | JWT (io.jsonwebtoken – jjwt) |
+| ORM              | Spring Data JPA (Hibernate) |
+| Database         | MySQL / PostgreSQL |
+| Build Tool       | Maven |
+| API Testing      | Postman / curl |
+| Deployment Ready | Docker + Cloud |
 
-Authentication is centralized
+---
 
-Authorization is enforced using JWT tokens
+## 📂 Project Structure
 
-Services communicate securely over HTTP
+auth-service
+├── controller
+│ └── AuthController.java
+├── service
+│ └── UserService.java
+├── security
+│ ├── JwtUtil.java
+│ ├── JwtAuthFilter.java
+│ └── SecurityConfig.java
+├── repository
+│ └── UserRepository.java
+├── entity
+│ └── User.java
+├── dto
+│ ├── AuthRequest.java
+│ └── AuthResponse.java
+├── exception
+│ └── GlobalExceptionHandler.java
+└── AuthServiceApplication.java
 
-[ Client / Frontend ]
-          |
-          v
-[ Auth Service ] ---> issues JWT
-          |
-          v
-[ Other Microservices ]
-(validate JWT on each request)
 
-🛠️ Tech Stack
-Category	Technology
-Language	Java 17
-Framework	Spring Boot 3
-Security	Spring Security 6
-Authentication	JWT (JSON Web Tokens)
-Database	PostgreSQL
-ORM	Spring Data JPA (Hibernate)
-Password Hashing	BCrypt
-Build Tool	Maven
-Deployment	Render (Free Tier)
-API Testing	Postman / cURL
-🔐 Security Design
+---
 
-Stateless authentication using JWT
+## 🔐 Authentication Flow
 
-BCrypt password hashing
-
-Spring Security Filter Chain
-
-Custom JwtAuthFilter to validate tokens
-
-Protected endpoints require a valid JWT
-
-Public endpoints explicitly whitelisted
-
-Token Flow
-
-User registers or logs in
-
-Auth Service generates a JWT
-
-Client sends JWT in Authorization header
-
-Token validated on every protected request
+1. User registers via `/auth/register`
+2. Password is encrypted using BCrypt
+3. User data stored in DB
+4. JWT token is generated
+5. Client sends token in every secured request
 
 Authorization: Bearer <JWT_TOKEN>
 
-📂 Project Structure
-auth-service
-├── controller
-│   └── AuthController.java
-├── service
-│   └── UserService.java
-├── security
-│   ├── JwtUtil.java
-│   ├── JwtAuthFilter.java
-│   └── SecurityConfig.java
-├── repository
-│   └── UserRepository.java
-├── entity
-│   └── User.java
-├── dto
-│   ├── AuthRequest.java
-│   └── AuthResponse.java
-├── exception
-│   └── GlobalExceptionHandler.java
-└── application.properties
 
-🌐 API Endpoints
-🔓 Public Endpoints
-Register User
+---
+
+## 🚀 API Endpoints
+
+### ✅ Register User
 POST /auth/register
 
 
-Request Body
-
+**Request**
+```json
 {
   "username": "john",
   "email": "john@example.com",
-  "password": "Password123"
+  "password": "password123"
 }
-
-
 Response
 
 {
-  "token": "<JWT_TOKEN>",
+  "token": "eyJhbGciOiJIUzM4NCJ9...",
   "message": "User registered successfully"
 }
-
-Login
+✅ Login User
 POST /auth/login
-
-
-Request Body
+Request
 
 {
   "username": "john",
-  "password": "Password123"
+  "password": "password123"
 }
+Response
 
-🔐 Protected Endpoints
-Verify Authentication
+{
+  "token": "eyJhbGciOiJIUzM4NCJ9...",
+  "message": "Login successful"
+}
+🔒 Secured Endpoint
 GET /auth/me
-
-
-Headers
+Header
 
 Authorization: Bearer <JWT_TOKEN>
-
-
 Response
 
 You are authenticated!
-
-
-❌ Without JWT → 401 Unauthorized
-
-❗ Error Handling
-
-The service uses a Global Exception Handler to return clean, consistent error responses.
-
-Example: Duplicate Username
-POST /auth/register
-
-
-Response
+❌ Negative Test Scenarios
+Username Already Exists
+Status: 400 BAD REQUEST
 
 {
   "timestamp": "2026-01-30T01:01:20",
   "message": "Username already exists",
   "status": 400
 }
+Invalid Password
+Status: 401 UNAUTHORIZED
 
+{
+  "timestamp": "2026-01-30T01:05:12",
+  "message": "Invalid password",
+  "status": 401
+}
+Missing JWT Token
+Status: 403 FORBIDDEN
 
-This avoids ugly stack traces and makes the API consumer-friendly.
+{
+  "status": 403,
+  "error": "Forbidden"
+}
+⚙️ Security Configuration Highlights
+CSRF disabled (JWT based)
 
-🧪 Testing
-Using Postman
+Stateless session
 
-Register → receive JWT
+Custom JWT filter
 
-Login → receive JWT
+Only /auth/login and /auth/register are public
 
-Access /auth/me with JWT → ✅
+All other endpoints require authentication
 
-Access /auth/me without JWT → ❌ 401
+.anyRequest().authenticated()
+🌍 Deployment (Free Tier Friendly)
+This service can be deployed on:
 
-Negative Test Cases
+Railway
 
-Duplicate username → 400
+Render
 
-Invalid password → 401
+Fly.io
 
-Missing JWT → 401
+AWS EC2 (Free Tier)
 
-Tampered JWT → 403
+Docker (Optional)
+docker build -t auth-service .
+docker run -p 8082:8082 auth-service
+📈 Production-Readiness Checklist
+✅ JWT-based stateless authentication
+✅ Encrypted passwords
+✅ Global exception handling
+✅ Clean layered architecture
+✅ Secure endpoints
+✅ Cloud-deployable
+✅ GitHub-ready documentation
 
-☁️ Cloud Deployment (Render – Free Tier)
-Environment Variables
-DB_HOST=xxxx
-DB_PORT=5432
-DB_NAME=auth_db
-DB_USERNAME=xxxx
-DB_PASSWORD=xxxx
-JWT_SECRET=superStrongSecretKey123!
+🔮 Next Roadmap
+API Gateway
 
-Build Command
-./mvnw clean package
+Product Service
 
-Start Command
-java -jar target/auth-service-0.0.1-SNAPSHOT.jar
+Order Service
 
+Inventory Service
 
-Once deployed, Render provides a public HTTPS URL usable as a demo environment.
+Payment Service
 
-🚀 Production Readiness Checklist
+Centralized Config Server
 
-✔ Stateless JWT authentication
-✔ Secure password hashing
-✔ Global exception handling
-✔ Environment-based configuration
-✔ Cloud deployable
-✔ Clear API contracts
-✔ Scalable microservice design
+Distributed Tracing
 
-🔮 Future Enhancements
+CI/CD Pipeline
 
-Refresh tokens
+👤 Author
+Built as part of a Production-Grade E-Commerce Microservices Project
+using Spring Boot & Cloud-Native principles.
 
-Role-based authorization (ADMIN / USER)
-
-API Gateway integration
-
-OAuth2 / Social login
-
-Rate limiting
-
-Centralized logging & monitoring
-
-👨‍💻 Author
-
-Built as part of a production-grade Ecommerce Microservices platform to demonstrate real-world backend architecture, security, and cloud deployment practices.
