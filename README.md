@@ -47,6 +47,7 @@ v
 
 ## 📂 Project Structure
 
+
 auth-service
 ├── controller
 │ └── AuthController.java
@@ -104,7 +105,7 @@ Response
 }
 ✅ Login User
 POST /auth/login
-Request
+**Request**
 
 {
   "username": "john",
@@ -117,6 +118,7 @@ Response
   "message": "Login successful"
 }
 🔒 Secured Endpoint
+**Request**
 GET /auth/me
 Header
 
@@ -148,7 +150,7 @@ Status: 403 FORBIDDEN
   "status": 403,
   "error": "Forbidden"
 }
-⚙️ Security Configuration Highlights
+## ⚙️ Security Configuration Highlights
 CSRF disabled (JWT based)
 
 Stateless session
@@ -160,7 +162,8 @@ Only /auth/login and /auth/register are public
 All other endpoints require authentication
 
 .anyRequest().authenticated()
-🌍 Deployment (Free Tier Friendly)
+
+## 🌍 Deployment (Free Tier Friendly)
 This service can be deployed on:
 
 Railway
@@ -183,24 +186,24 @@ docker run -p 8082:8082 auth-service
 ✅ Cloud-deployable
 ✅ GitHub-ready documentation
 
-🔮 Next Roadmap
-API Gateway
+## 🔮 Next Roadmap
+### API Gateway
 
-Product Service
+### Product Service
 
-Order Service
+### Order Service
 
-Inventory Service
+### Inventory Service
 
-Payment Service
+### Payment Service
 
-Centralized Config Server
+### Centralized Config Server
 
-Distributed Tracing
+### Distributed Tracing
 
-CI/CD Pipeline
+### CI/CD Pipeline
 
-👤 Author
+## 👤 Author
 Built as part of a Production-Grade E-Commerce Microservices Project
 using Spring Boot & Cloud-Native principles.
 
