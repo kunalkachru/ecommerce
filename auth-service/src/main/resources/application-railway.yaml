@@ -1,17 +1,37 @@
+#spring:
+#  datasource:
+#    # JDBC prefix is mandatory
+#    url: jdbc:${DATABASE_URL}         # Railway provides this
+#    username: ${PGUSER}          # Railway environment variable
+#    password: ${PGPASSWORD}      # Railway environment variable
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: false
+#
+#server:
+#  port: ${PORT:8080}
+#jwt:
+#  secret: ${JWT_SECRET}
+#  expiration-ms: 36000000
 spring:
   datasource:
-    # JDBC prefix is mandatory
-    url: jdbc:${DATABASE_URL}         # Railway provides this
-    username: ${PGUSER}          # Railway environment variable
-    password: ${PGPASSWORD}      # Railway environment variable
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}   # explicit JDBC URL
+    username: ${PGUSER}                                        # Railway user
+    password: ${PGPASSWORD}                                    # Railway password
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect       # explicitly set dialect
 
 server:
   port: ${PORT:8080}
+
 jwt:
   secret: ${JWT_SECRET}
   expiration-ms: 36000000
