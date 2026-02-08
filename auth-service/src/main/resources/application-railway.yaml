@@ -1,6 +1,7 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}         # Railway provides this
+    # JDBC prefix is mandatory
+    url: jdbc:${DATABASE_URL}         # Railway provides this
     username: ${PGUSER}          # Railway environment variable
     password: ${PGPASSWORD}      # Railway environment variable
 
