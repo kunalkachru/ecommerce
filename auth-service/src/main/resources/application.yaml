@@ -19,3 +19,6 @@ management:
       exposure:
         include: health,info
 
+jwt:
+  secret: my-local-dev-secret-key-which-is-very-long-32chars
+  expiration-ms: 36000000
