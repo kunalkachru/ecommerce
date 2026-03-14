@@ -43,3 +43,6 @@ build/
 
 # Env files
 .env
+AGENTS.md
+oracle-cloud-deployment-guide.md
+plan-authServiceCloudDeploy.prompt.md
